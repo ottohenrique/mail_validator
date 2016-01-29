@@ -1,0 +1,41 @@
+<h1>Validador de e-mails</h1>
+
+<hr>
+
+<% if flash[:error].present? %>
+  <div class='error'>
+    <%= flash[:error] %>
+  </div>
+<% end %>
+
+<%= form_tag '/validator/validate', multipart: true, class: 'form-horizontal' do |f| %>
+<fieldset>
+
+<!-- Textarea -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="textarea">
+Lista de e-mails</label>
+  <div class="col-md-4">                     
+    <%= text_area :email, :list, size: '20x10', class: 'form-control' %>
+  </div>
+</div>
+
+<!-- File Button --> 
+<div class="form-group">
+  <label class="col-md-4 control-label" for="filebutton">Escolha um arquivo</label>
+  <div class="col-md-4">
+    <%= file_field :email, :file, class: 'input-file' %>
+  </div>
+</div>
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="singlebutton"></label>
+  <div class="col-md-4">
+    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Enviar</button>
+  </div>
+</div>
+
+</fieldset>
+
+<% end %>
