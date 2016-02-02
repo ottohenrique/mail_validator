@@ -12,8 +12,8 @@ class ValidatorController < ApplicationController
       list.each do |email_name|
         v = email_name.match(/\A([\w+\-]\.?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i).present?
         Email.create(name: email_name, email_valid: v)        
-      end  
-    redirect_to "/validator/results"
+      end
+      redirect_to "/validator/results"
     end
   end
 
