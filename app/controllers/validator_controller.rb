@@ -3,25 +3,22 @@ class ValidatorController < ApplicationController
   end
 
   def validate
-    if  emails_params['list'].blank? && emails_params['file'].blank?
-      flash[:error] = 'Necessário passar uma lista de e-mails!'
-      render 'index'
+    emails_list = params["email"]["list"]
+    if emails_list.blank?
+      flash["error"] = "Lista vazia, preencha com e-mails."
+      render "index"
     else
-      file = emails_params['file']
-
-      File.open(Rails.root.join('public', 'uploads', file.original_filename), 'wb') do |f|
-        f.write(file.read)
+      list = emails_list.split("\r\n")
+      list.each do |email_name|
+        v = email_name.match(/\A([\w+\-]\.?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i).present?
+        Email.create(name: email_name, email_valid: v)        
       end
-
-      render 'results'
+      redirect_to "/validator/results"
     end
   end
 
   def results
+    @emails = Email.all
   end
 
-  private
-  def emails_params
-    params['email']
-  end
 end

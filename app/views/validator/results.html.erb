@@ -1,2 +1,9 @@
-<h1>Validator#results</h1>
-<p>Find me in app/views/validator/results.html.erb</p>
+Emails
+
+<ul>  
+  <% @emails.each do |email| %>
+    <li><%= email.name %></li>
+    <li><%= email.email_valid %></li>
+  <% end %>
+</ul>  
+    
