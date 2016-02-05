@@ -1,3 +1,6 @@
+require 'resolv'
+require 'net/smtp'
+
 class ValidatorController < ApplicationController
   def index
   end
@@ -10,8 +13,10 @@ class ValidatorController < ApplicationController
     else
       list = emails_list.split("\r\n")
       list.each do |email_name|
+        domain = email_name.split('@').last
         v = email_name.match(/\A([\w+\-]\.?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i).present?
-        Email.create(name: email_name, email_valid: v)        
+        v = v && dns_valid(domain).present?
+        Email.create(name: email_name, email_valid: v)
       end
       redirect_to "/validator/results"
     end
@@ -19,6 +24,24 @@ class ValidatorController < ApplicationController
 
   def results
     @emails = Email.all
+  end
+
+  def dns_valid(domain)
+    dns = Resolv::DNS.new
+
+    mx_records = dns.getresources domain, Resolv::DNS::Resource::IN::MX
+    if mx_records.any?
+      mx_server  = mx_records.first.exchange.to_s
+      return mx_server
+    else
+      return false
+    end
+
+    Net::SMTP.start mx_server, 25 do |smtp|
+      smtp.helo "loldomain.com"
+      smtp.mailfrom "test@loldomain.com"
+    end
+
   end
 
 end
