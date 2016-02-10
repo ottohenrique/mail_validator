@@ -32,14 +32,12 @@ class ValidatorController < ApplicationController
     mx_records = dns.getresources domain, Resolv::DNS::Resource::IN::MX
     if mx_records.any?
       mx_server  = mx_records.first.exchange.to_s
-      return mx_server
     else
       return false
     end
 
     Net::SMTP.start mx_server, 25 do |smtp|
       smtp.helo "loldomain.com"
-      smtp.mailfrom "test@loldomain.com"
     end
 
   end
